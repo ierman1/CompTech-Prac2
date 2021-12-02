@@ -78,30 +78,62 @@ class Graph:
 def coloring_greedy(graph):
     '''graph is an instance of class Graph'''
     
-    maxDegree = 0
-    i = 0
-
-    while True: # n + 1
-        try:
-            tmp = len(graph.get(i))
-            if maxDegree < tmp:
-                maxDegree = tmp
-            i += 1
-        except:
-            break
-
-    return maxDegree + 1
-        
-
+    result = {}
     
+
+    pass
+        
+def is_safe(vertex):
+    pass
 
 ### Backtrack
 def coloring_backtrack(graph, n):
     '''graph is an instance of class Graph, n is the maximum number of colors to be used'''
-    #TODO
+    
+    maxColor = 1
+    result = { 0: maxColor }
+    visited = []
+    queue = []
+
+    queue.append(0)
+    visited.append(0)
+
+    while len(queue) != 0:
+
+        tmp = queue.pop(0)
+
+        for v in graph.get(tmp):
+            visited.append(v)
+            queue.append(v)
+
+            if is_safe(v):
+                maxColor = result[tmp] + 1
+            else:
+                maxColor += 1
+            
+            result[v] = maxColor
+
+            
+
+                
+
+
+
+
     pass
+
+'''
+If all colors are assigned,
+    print vertex assigned colors
+Else
+    a. Trying all possible colors, assign a color to the vertex
+    b. If color assignment is possible, recursivelty assign colors to next vertices
+    c. If color assignment is not possible, de-assign color, return False
+'''
+    
 
 lst = [2, -4, 1, 9, -6, 7, -3]
 print(maxsum_subseq_dnc(lst))
 
 print(coloring_greedy(Graph([(0, 1), (0, 4), (0, 5), (4, 5), (1, 4), (1, 3), (2, 3), (2, 4)])))
+print(coloring_backtrack(Graph([(0, 1), (0, 4), (0, 5), (4, 5), (1, 4), (1, 3), (2, 3), (2, 4)]), 2))
