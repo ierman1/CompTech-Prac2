@@ -83,44 +83,53 @@ def coloring_greedy(graph):
 
     pass
         
-def is_safe(vertex):
-    pass
+def is_safe(vertex, graph, res, color):
+    return True
+    
 
 ### Backtrack
 def coloring_backtrack(graph, n):
     '''graph is an instance of class Graph, n is the maximum number of colors to be used'''
     
-    maxColor = 1
-    result = { 0: maxColor }
-    visited = []
-    queue = []
+    visited = [0]
+    trail = [0]
+    res = { 0: 0 }
 
-    queue.append(0)
-    visited.append(0)
-
-    while len(queue) != 0:
-
-        tmp = queue.pop(0)
+    while len(visited) != graph.nverts:
+        tmp = trail[-1]
+        print(trail)
+        found = False
 
         for v in graph.get(tmp):
-            visited.append(v)
-            queue.append(v)
+            if v not in visited:
+                visited.append(v)
+                trail.append(v)
+                found = True
 
-            if is_safe(v):
-                maxColor = result[tmp] + 1
-            else:
-                maxColor += 1
-            
-            result[v] = maxColor
+                for c in range(1, n + 1):
+                    if is_safe(v, graph, res, c):
+                        res[v] = c
+                    else:
+                        res[v] = c + 1
 
-            
+                break
 
-                
+        if not found:
+            trail = trail[:-1]
 
+    return res
 
-
-
-    pass
+'''
+    Trash:
+    ------
+    res[v] = res[tmp] + 1
+    if len(trail[:-2]) > 0:
+        for vt in trail[:-2]: #vt => vertex al trail
+            if vt not in graph.get(v):
+                print(v, " => ", graph.get(v), " => ", vt)
+                res[v] = res[vt]
+                break
+'''
 
 '''
 If all colors are assigned,
@@ -132,8 +141,9 @@ Else
 '''
     
 
-lst = [2, -4, 1, 9, -6, 7, -3]
-print(maxsum_subseq_dnc(lst))
+#lst = [2, -4, 1, 9, -6, 7, -3]
+#print(maxsum_subseq_dnc(lst))
 
-print(coloring_greedy(Graph([(0, 1), (0, 4), (0, 5), (4, 5), (1, 4), (1, 3), (2, 3), (2, 4)])))
-print(coloring_backtrack(Graph([(0, 1), (0, 4), (0, 5), (4, 5), (1, 4), (1, 3), (2, 3), (2, 4)]), 2))
+#print(coloring_greedy(Graph([(0, 1), (0, 4), (0, 5), (4, 5), (1, 4), (1, 3), (2, 3), (2, 4)])))
+print(coloring_backtrack(Graph([(0, 1), (0, 4), (0, 5), (4, 5), (1, 4), (1, 3), (2, 3), (2, 4)]), 4))
+#print(coloring_backtrack(Graph([(1, 5), (0, 5), (4, 5), (1, 4), (1, 3), (2, 3), (2, 4), (1, 6)]), 4))
