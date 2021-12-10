@@ -74,18 +74,42 @@ class Graph:
             raise AttributeError(f'Value {x} is not a vertex in this graph.')
 
 
+
+def max_degree(graph):
+    max = 0
+    for i in range(graph.nverts):
+        new = len(graph.get(i))
+        if  new > max:
+            max = new
+
+    return max
+
 ### Greedy
 def coloring_greedy(graph):
     '''graph is an instance of class Graph'''
     
     result = {}
+    maxDegree = max_degree(graph)
     
+    for i in range(graph.nverts):
+        for c in range(1, maxDegree + 1):
+            found = False
+            for a in graph.get(i):
+                if a in result and result[a] == c:
+                    found = True
+                    break
+            if not found:
+                result[i] = c
+                break
 
-    pass
+    return result
         
-def is_safe(vertex, graph, res, color):
+def is_safe(color, adj, visited, assignements):
+    for a in adj:
+        if a in visited and assignements[a] == color:
+            return False
+
     return True
-    
 
 ### Backtrack
 def coloring_backtrack(graph, n):
@@ -93,11 +117,10 @@ def coloring_backtrack(graph, n):
     
     visited = [0]
     trail = [0]
-    res = { 0: 0 }
+    res = { 0: 1 }
 
     while len(visited) != graph.nverts:
         tmp = trail[-1]
-        print(trail)
         found = False
 
         for v in graph.get(tmp):
@@ -107,10 +130,12 @@ def coloring_backtrack(graph, n):
                 found = True
 
                 for c in range(1, n + 1):
-                    if is_safe(v, graph, res, c):
+                    if is_safe(c, graph.get(v), visited, res):
                         res[v] = c
-                    else:
-                        res[v] = c + 1
+                        break
+
+                if not v in res:
+                    return {}
 
                 break
 
@@ -119,31 +144,10 @@ def coloring_backtrack(graph, n):
 
     return res
 
-'''
-    Trash:
-    ------
-    res[v] = res[tmp] + 1
-    if len(trail[:-2]) > 0:
-        for vt in trail[:-2]: #vt => vertex al trail
-            if vt not in graph.get(v):
-                print(v, " => ", graph.get(v), " => ", vt)
-                res[v] = res[vt]
-                break
-'''
-
-'''
-If all colors are assigned,
-    print vertex assigned colors
-Else
-    a. Trying all possible colors, assign a color to the vertex
-    b. If color assignment is possible, recursivelty assign colors to next vertices
-    c. If color assignment is not possible, de-assign color, return False
-'''
-    
-
 #lst = [2, -4, 1, 9, -6, 7, -3]
 #print(maxsum_subseq_dnc(lst))
 
-#print(coloring_greedy(Graph([(0, 1), (0, 4), (0, 5), (4, 5), (1, 4), (1, 3), (2, 3), (2, 4)])))
+print(coloring_greedy(Graph([(0, 1), (0, 4), (0, 5), (4, 5), (1, 4), (1, 3), (2, 3), (2, 4)])))
+print(coloring_backtrack(Graph([(0, 1), (0, 4), (0, 5), (4, 5), (1, 4), (1, 3), (2, 3), (2, 4)]), 2))
 print(coloring_backtrack(Graph([(0, 1), (0, 4), (0, 5), (4, 5), (1, 4), (1, 3), (2, 3), (2, 4)]), 4))
-#print(coloring_backtrack(Graph([(1, 5), (0, 5), (4, 5), (1, 4), (1, 3), (2, 3), (2, 4), (1, 6)]), 4))
+print(coloring_backtrack(Graph([(1, 5), (0, 5), (4, 5), (1, 4), (1, 3), (2, 3), (2, 4), (1, 6)]), 4))
