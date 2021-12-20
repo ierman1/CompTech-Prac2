@@ -14,7 +14,7 @@ def maxsum_subseq_dnc(lst, low = None, high = None):
         low, high = 0, len(lst) - 1
 
     if high == low:
-        return lst[0]
+        return high, low, lst[0]
 
     mid = (low + high) // 2
 
@@ -22,14 +22,21 @@ def maxsum_subseq_dnc(lst, low = None, high = None):
     maxRight = None
 
     '''
-        Trobar la max sublist de l'esquerra, incloent l'element del mig
-        Bucle para encontrar la sublista 
+        Bucle para encontrar la max sum de la sublista de la izquierda, incluyendo el elemento del medio 
     '''
     tmp = 0
+    startLeft = 0
+    endLeft = 0
+    acumulator = 0
     for i in range(mid, low - 1, -1):
         tmp += lst[i]
+        acumulator += 1
         if maxLeft == None or tmp > maxLeft:
+            startLeft = i
+            acumulator = 0
             maxLeft = tmp
+
+    endLeft = startLeft + acumulator
 
     '''
         Encuentra la max sum de la sublista de la derecha, excluyendo el elemendo del medio
@@ -52,14 +59,12 @@ def maxsum_subseq_dnc(lst, low = None, high = None):
 def maxsum_subseq_dp(lst):
     '''lst is a list of integers'''
     
-
     sum = 0
     max = 0
     tmpStart = 0
     tmpEnd = 0
     start = 0
     end = 0
-    
     
     '''
         Iteramos por la lista 'lst', en cada iteración sumamos el valor actual. Comprobamos si la suma  
