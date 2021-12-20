@@ -7,54 +7,71 @@
 #We want our function to return those indices and the value of the sum.
 
 ### Divide and Conquer
-def maxsum_subseq_dnc(lst, low = None, high = None):
+def maxsum_subseq_dnc(lst):
     '''lst is a list of integers'''
-    
-    if low is None and high is None:
-        low, high = 0, len(lst) - 1
 
-    if high == low:
-        return high, low, lst[0]
+    '''
+        Caso trivial: La subcadena se ha dividido hasta ser una lista de un solo elemento y lo devolvemos.
+    ''' 
+    if len(lst) == 1:
+        return [0, 0, lst[0]]
 
-    mid = (low + high) // 2
+    '''
+        Obtenemos la partición de la cadena
+    '''
+    mid = len(lst) // 2
 
-    maxLeft = None
-    maxRight = None
+
+
+    maxLeft = 0
+    maxRight = 0
 
     '''
         Bucle para encontrar la max sum de la sublista de la izquierda, incluyendo el elemento del medio 
     '''
     tmp = 0
-    startLeft = 0
-    endLeft = 0
-    acumulator = 0
-    for i in range(mid, low - 1, -1):
+    leftPos = 0
+    for i in range(mid, 0, -1):
         tmp += lst[i]
-        acumulator += 1
-        if maxLeft == None or tmp > maxLeft:
-            startLeft = i
-            acumulator = 0
+        if tmp > maxLeft:
+            leftPos = i
             maxLeft = tmp
-
-    endLeft = startLeft + acumulator
 
     '''
         Encuentra la max sum de la sublista de la derecha, excluyendo el elemendo del medio
     '''
     tmp = 0
-    for i in range(mid + 1, high + 1):
+    rightPos = 0
+    for i in range(mid + 1, len(lst) - 1):
         tmp += lst[i]
-        if maxRight == None or tmp > maxRight:
+        if tmp > maxRight:
+            rightPos = i
             maxRight = tmp
 
-    
-    maxCrossing = max(maxsum_subseq_dnc(lst, low, mid), maxsum_subseq_dnc(lst, mid + 1, high))
+
+
+    '''
+        Obtenemos los máximos resultados de la parte izquierda, derecha y central de la cadena
+    '''
+    left = maxsum_subseq_dnc(lst[:mid])
+    right = maxsum_subseq_dnc(lst[mid:])
+    crossing = [leftPos, rightPos, maxLeft + maxRight]
+
+
 
     '''
         Devuelve el máximo de las tres secuencias
     '''
-    return max(maxCrossing, maxLeft + maxRight)
-        
+    if left[2] >= crossing[2] and left[2] >= right[2]:
+        return left
+
+    elif right[2] >= crossing[2]:
+        return [mid + right[0], mid + right[1], right[2]]
+
+    return crossing
+
+
+
 ### Dynamic Programming
 def maxsum_subseq_dp(lst):
     '''lst is a list of integers'''
@@ -97,9 +114,10 @@ def maxsum_subseq_dp(lst):
             tmpStart += 1
     
     return start, end, max
-    
-##Problema 2.2
 
+
+
+##Problema 2.2
 class Graph:
     def __init__(self, edge_list):
         self.nverts = max(map(max, edge_list)) + 1
@@ -151,7 +169,9 @@ def coloring_greedy(graph):
                 break
 
     return result
-        
+
+
+
 def is_safe(color, adj, visited, assignements):
     for a in adj:
         if a in visited and assignements[a] == color:
@@ -203,6 +223,7 @@ def coloring_backtrack(graph, n):
 print(maxsum_subseq_dp([2, 2, 1, -9, -7, 7, -3]))
 print(maxsum_subseq_dp([2, -4, 1, 9, -6, 7, -3]))
 print(maxsum_subseq_dnc([2, -4, 1, 9, -6, 7, -3]))
+print(maxsum_subseq_dnc([2, 2, 1, -9, -7, 7, -3]))
 print(coloring_greedy(Graph([(0, 1), (0, 4), (0, 5), (4, 5), (1, 4), (1, 3), (2, 3), (2, 4)])))
 print(coloring_backtrack(Graph([(0, 1), (0, 4), (0, 5), (4, 5), (1, 4), (1, 3), (2, 3), (2, 4)]), 2))
 print(coloring_backtrack(Graph([(0, 1), (0, 4), (0, 5), (4, 5), (1, 4), (1, 3), (2, 3), (2, 4)]), 4))
