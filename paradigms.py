@@ -1,4 +1,7 @@
+#Autores: Germán Pérez, Èlia Isart
+
 # Practica 2
+
 
 ## Problema 2.1
 
@@ -20,7 +23,6 @@ def maxsum_subseq_dnc(lst):
         Obtenemos la partición de la cadena
     '''
     mid = len(lst) // 2
-
 
 
     maxLeft = 0
@@ -55,20 +57,25 @@ def maxsum_subseq_dnc(lst):
     '''
     left = maxsum_subseq_dnc(lst[:mid])
     right = maxsum_subseq_dnc(lst[mid:])
-    crossing = [leftPos, rightPos, maxLeft + maxRight]
+    center = [leftPos, rightPos, maxLeft + maxRight]
 
+    res = [
+        left,
+        [mid + right[0], mid + right[1], right[2]],
+        center
+    ]
+    
+    values = [
+        res[0][2],
+        res[1][2],
+        res[2][2]
+    ]
 
 
     '''
         Devuelve el máximo de las tres secuencias
     '''
-    if left[2] >= crossing[2] and left[2] >= right[2]:
-        return left
-
-    elif right[2] >= crossing[2]:
-        return [mid + right[0], mid + right[1], right[2]]
-
-    return crossing
+    return res[values.index(max(values))]
 
 
 
